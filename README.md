@@ -1,4 +1,4 @@
-# Aptos Rust SDK
+# Move Rust SDK
 
 [![CI](https://github.com/aptos-labs/aptos-rust-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/aptos-labs/aptos-rust-sdk/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/aptos-labs/aptos-rust-sdk/graph/badge.svg)](https://codecov.io/gh/aptos-labs/aptos-rust-sdk)
@@ -92,7 +92,7 @@ Enable everything:
 
 ```toml
 [dependencies]
-aptos-sdk = { git = "https://github.com/aptos-labs/aptos-rust-sdk", package = "aptos-sdk", features = ["full"] }
+aptos-sdk = { git = "https://github.com/inferenco/move-rust-sdk", package = "aptos-sdk", features = ["full"] }
 ```
 
 ## Examples
