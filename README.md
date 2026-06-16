@@ -27,7 +27,7 @@ A chain-agnostic Rust SDK for the [Move language](https://move-language.github.i
 
 ## Prerequisites
 
-- **Rust** 1.90+ (pinned in [`rust-toolchain.toml`](rust-toolchain.toml))
+- **Rust** 1.95+ (pinned in [`rust-toolchain.toml`](rust-toolchain.toml))
 - An Aptos fullnode REST endpoint (mainnet / testnet / devnet / localnet)
 
 ## Quick Start

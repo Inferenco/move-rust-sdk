@@ -4,7 +4,7 @@ Core Move SDK primitives — cryptography, transaction building, and network cli
 
 ## Features
 
-- **Full Blockchain Interaction**: Connect, explore, and interact with the Aptos blockchain
+- **Full Blockchain Interaction**: Connect, explore, and interact with Move-based blockchains
 - **Multiple Signature Schemes**: Ed25519, Secp256k1, Secp256r1 (P-256), and BLS12-381
 - **Transaction Building**: Fluent builder pattern for constructing transactions
 - **Account Management**: Single-key, multi-sig, and keyless (OIDC) accounts
@@ -17,7 +17,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-aptos-sdk = "0.3"
+aptos-sdk = "0.5.0"
 ```
 
 Basic usage:
@@ -64,7 +64,7 @@ For the smallest possible binary:
 
 ```toml
 [dependencies]
-aptos-sdk = { version = "0.1", default-features = false, features = ["ed25519"] }
+aptos-sdk = { version = "0.5.0", default-features = false, features = ["ed25519"] }
 ```
 
 ### Full Build
@@ -73,7 +73,7 @@ For all features:
 
 ```toml
 [dependencies]
-aptos-sdk = { version = "0.1", features = ["full"] }
+aptos-sdk = { version = "0.5.0", features = ["full"] }
 ```
 
 ## Examples
@@ -230,4 +230,3 @@ cargo doc -p aptos-sdk --all-features --document-private-items
 ## License
 
 Apache-2.0
-
