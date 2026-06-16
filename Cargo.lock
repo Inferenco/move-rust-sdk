@@ -78,57 +78,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aptos-sdk"
-version = "0.5.0"
-dependencies = [
- "anyhow",
- "aptos-bcs",
- "aptos-sdk-macros",
- "arbitrary",
- "aws-lc-sys",
- "bip39",
- "blst",
- "clap",
- "const-hex",
- "ed25519-dalek",
- "futures",
- "hmac",
- "jsonwebtoken",
- "k256",
- "p256",
- "proptest",
- "proptest-derive",
- "rand 0.8.6",
- "reqwest",
- "serde",
- "serde_bytes",
- "serde_json",
- "sha2",
- "sha3",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "url",
- "urlencoding",
- "wiremock",
- "zeroize",
-]
-
-[[package]]
-name = "aptos-sdk-macros"
-version = "0.3.0"
-dependencies = [
- "aptos-sdk",
- "proc-macro2",
- "quote",
- "serde",
- "serde_json",
- "syn",
- "tokio",
- "trybuild",
-]
-
-[[package]]
 name = "arbitrary"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1327,6 +1276,73 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "move-core-sdk"
+version = "0.5.0"
+dependencies = [
+ "anyhow",
+ "aptos-bcs",
+ "arbitrary",
+ "aws-lc-sys",
+ "bip39",
+ "blst",
+ "clap",
+ "const-hex",
+ "ed25519-dalek",
+ "futures",
+ "hmac",
+ "jsonwebtoken",
+ "k256",
+ "move-core-sdk-macros",
+ "p256",
+ "proptest",
+ "proptest-derive",
+ "rand 0.8.6",
+ "reqwest",
+ "serde",
+ "serde_bytes",
+ "serde_json",
+ "sha2",
+ "sha3",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "url",
+ "urlencoding",
+ "wiremock",
+ "zeroize",
+]
+
+[[package]]
+name = "move-core-sdk-macros"
+version = "0.3.0"
+dependencies = [
+ "move-core-sdk",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn",
+ "tokio",
+ "trybuild",
+]
+
+[[package]]
+name = "move-rust-sdk"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "move-core-sdk",
+ "move-core-sdk-macros",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "url",
+ "wiremock",
 ]
 
 [[package]]
