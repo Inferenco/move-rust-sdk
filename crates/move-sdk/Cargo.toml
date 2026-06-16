@@ -1,0 +1,112 @@
+[package]
+name = "move-rust-sdk"
+version = "0.1.0"
+description = "A chain-agnostic Move SDK for Movement, Aptos, and other Move-based blockchains"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish = true
+repository.workspace = true
+rust-version.workspace = true
+readme = "README.md"
+keywords = ["move", "aptos", "movement", "blockchain", "crypto", "sdk", "web3"]
+categories = ["cryptography", "api-bindings", "asynchronous"]
+exclude = ["tests/e2e/move/**/*.mv"]
+
+[lints]
+workspace = true
+
+[features]
+# The chain-agnostic core (signing primitives, transaction types,
+# network client, MoveConfig::custom, MoveClient) is always available.
+# Pre-built chain configurations are opt-in: enable `aptos`,
+# `movement`, or `all-chains` to get `AptosConfig::*` / `MovementConfig::*`
+# constructors. Without any chain feature, the developer must use
+# `MoveConfig::custom` (with a `ChainPreset`) to target any chain.
+default = ["ed25519", "secp256k1", "secp256r1", "indexer", "faucet", "mnemonic"]
+# Pre-built configuration for the Aptos blockchain. When this feature
+# is **not** enabled, the `AptosConfig` type and its constructors are
+# not available — callers must build an equivalent
+# `MoveConfig::custom(..., ChainPreset::Aptos)` themselves.
+aptos = []
+# Pre-built configuration for the Movement blockchain. When this
+# feature is **not** enabled, the `MovementConfig` type and its
+# constructors are not available — callers must build an equivalent
+# `MoveConfig::custom(..., ChainPreset::Movement)` themselves.
+movement = []
+# Enable all pre-built chain configurations (Aptos and Movement).
+all-chains = ["aptos", "movement"]
+# All features
+full = ["ed25519", "secp256k1", "secp256r1", "bls", "keyless", "indexer", "faucet", "mnemonic", "all-chains"]
+
+# Cryptographic signature schemes
+ed25519 = ["move-core-sdk/ed25519"]
+secp256k1 = ["move-core-sdk/secp256k1"]
+secp256r1 = ["move-core-sdk/secp256r1"]
+bls = ["move-core-sdk/bls"]
+
+# BIP-39 mnemonic phrase support
+mnemonic = ["move-core-sdk/mnemonic"]
+
+# Account types
+keyless = ["move-core-sdk/keyless"]
+
+# API clients
+indexer = ["move-core-sdk/indexer"]
+faucet = ["move-core-sdk/faucet"]
+
+# Testing utilities
+fuzzing = ["move-core-sdk/fuzzing"]
+
+# E2E testing (requires running localnet)
+e2e = ["move-core-sdk/e2e"]
+
+# CLI for code generation
+cli = ["move-core-sdk/cli"]
+
+# Proc macros for contract bindings
+macros = ["move-core-sdk/macros"]
+
+[dependencies]
+# The underlying chain-specific implementation. The move-rust-sdk is a thin
+# chain-agnostic layer on top of move-core-sdk that provides a unified
+# configuration and naming API for any Move-based chain.
+move-core-sdk = { workspace = true }
+move-core-sdk-macros = { workspace = true, optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+url = { workspace = true }
+tokio = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full", "test-util"] }
+tempfile = "3.14"
+wiremock = "0.6"
+
+[[example]]
+name = "aptos_connect"
+path = "examples/aptos_connect.rs"
+required-features = ["aptos", "ed25519"]
+
+[[example]]
+name = "movement_connect"
+path = "examples/movement_connect.rs"
+required-features = ["movement", "ed25519"]
+
+[[example]]
+name = "custom_chain"
+path = "examples/custom_chain.rs"
+required-features = ["ed25519"]
+
+[[example]]
+name = "custom_only"
+path = "examples/custom_only.rs"
+required-features = ["ed25519"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+targets = ["x86_64-unknown-linux-gnu"]

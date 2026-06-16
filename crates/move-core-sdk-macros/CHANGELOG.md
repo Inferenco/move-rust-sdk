@@ -1,0 +1,52 @@
+# Changelog
+
+All notable changes to `move-core-sdk-macros` will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [unreleased]
+
+### Changed
+
+- **Breaking**: Renamed crate from `aptos-sdk-macros` to `move-core-sdk-macros`.
+  The `aptos_contract!`, `aptos_contract_file!`, and `MoveStruct` macros
+  now generate code that imports from `move_core_sdk` instead of `aptos_sdk`.
+
+## [0.3.0] - 2026-05-21
+
+### Changed
+- **MSRV bumped from 1.90 to 1.95** (via workspace `rust-version`). Aligns
+  with `aptos-sdk` 0.5.0; downstream consumers need at least Rust 1.95.0
+  (released 2026-04-14).
+
+## [0.2.1] - 2026-03-04
+
+### Changed
+- Patch version bump to align with `aptos-sdk` 0.4.1 release
+
+## [0.2.0] - 2026-02-25
+
+### Security
+- Made path traversal check in `aptos_contract_file!` non-bypassable via path canonicalization
+- Added input validation for Rust identifiers generated from Move ABI to prevent panics on malformed input
+- Added Rust keyword detection with automatic raw identifier (`r#`) fallback
+
+### Changed
+- Updated generated code to use `const-hex` instead of `hex` crate (aligns with aptos-sdk 0.4.0)
+- Removed unused `extra-traits` feature from `syn` dependency
+- Configured `docs.rs` publishing metadata
+
+## [0.1.0] - 2026-01-06
+
+### Added
+- `aptos_contract!` procedural macro for inline ABI-based contract bindings
+- `aptos_contract_file!` procedural macro for file-based ABI contract bindings
+- Type-safe Rust code generation from Move module ABIs
+- Support for entry functions, view functions, and struct definitions
+- Move-to-Rust type mapping (primitives, vectors, options, objects)
+
+[0.3.0]: https://github.com/aptos-labs/aptos-rust-sdk/releases/tag/macros-v0.3.0
+[0.2.1]: https://github.com/aptos-labs/aptos-rust-sdk/releases/tag/macros-v0.2.1
+[0.2.0]: https://github.com/aptos-labs/aptos-rust-sdk/releases/tag/macros-v0.2.0
+[0.1.0]: https://github.com/aptos-labs/aptos-rust-sdk/releases/tag/macros-v0.1.0

@@ -5,17 +5,19 @@
 resolver = "3"
 
 members = [
-    "crates/aptos-sdk",
-    "crates/aptos-sdk-macros",
+    "crates/move-core-sdk",
+    "crates/move-core-sdk-macros",
+    "crates/move-sdk",
 ]
 
-# NOTE: default-members is the complete list of binaries that form the "production Aptos codebase". These members should
+# NOTE: default-members is the complete list of binaries that form the "production codebase". These members should
 # never include crates that require fuzzing features or test features. These are the crates we want built with no extra
 # test-only code included.
 #
 # For more, see the "Conditional compilation for tests" section in documentation/coding_guidelines.md.
 default-members = [
-    "crates/aptos-sdk",
+    "crates/move-core-sdk",
+    "crates/move-sdk",
 ]
 
 # All workspace members should inherit these keys
@@ -100,8 +102,9 @@ large_futures = "allow"
 [workspace.dependencies]
 # Internal crate dependencies.
 # Please do not add any test features here: they should be declared by the individual crate.
-aptos-sdk = { version = "0.5.0", path = "crates/aptos-sdk" }
-aptos-sdk-macros = { version = "0.3.0", path = "crates/aptos-sdk-macros" }
+move-core-sdk = { version = "0.5.0", path = "crates/move-core-sdk" }
+move-core-sdk-macros = { version = "0.3.0", path = "crates/move-core-sdk-macros" }
+move-rust-sdk = { version = "0.1.0", path = "crates/move-sdk", package = "move-rust-sdk" }
 
 # External crate dependencies.
 # Please do not add any test features here: they should be declared by the individual crate.

@@ -7,17 +7,19 @@ compatibility.
 
 ## Project Overview
 
-The Aptos Rust SDK is a user-friendly, idiomatic Rust SDK for interacting
-with the Aptos blockchain. It has feature parity with the TypeScript SDK
-and supports full blockchain interaction including account management,
-transaction building, and multiple signature schemes.
+The Move Rust SDK is a chain-agnostic Rust SDK for the Move language
+ecosystem — works with Movement, Aptos, and any Move-based blockchain.
 
-The project consists of two workspace crates:
+The project consists of three workspace crates:
 
-- **aptos-sdk**: Main SDK crate with API clients, account management,
-  transaction building, and cryptography.
-- **aptos-sdk-macros**: Procedural macros for type-safe contract
-  bindings.
+- **move-core-sdk**: Core primitives — API clients, account management,
+  transaction building, and cryptography. Shared by all Move-based chains.
+- **move-core-sdk-macros**: Procedural macros for type-safe contract
+  bindings from Move ABIs.
+- **move-rust-sdk**: Chain-agnostic facade — unified `MoveConfig` /
+  `MoveClient` layer with pre-built Aptos and Movement configurations.
+  See `crates/move-sdk/CHANGELOG.md` and `crates/move-sdk/README.md`
+  for details.
 
 ## Required workflow for every code change
 
@@ -28,12 +30,23 @@ every one and will reject the PR otherwise.
 ```bash
 cargo fmt
 cargo fmt -- --check                                                 # idempotency check
-cargo clippy -p aptos-sdk --all-targets --all-features -- -D warnings
-cargo clippy -p aptos-sdk --all-targets -- -D warnings               # default features
-cargo clippy -p aptos-sdk --no-default-features -- -D warnings
-cargo test -p aptos-sdk --all-features
+
+# move-core-sdk
+cargo clippy -p move-core-sdk --all-targets --all-features -- -D warnings
+cargo clippy -p move-core-sdk --all-targets -- -D warnings               # default features
+cargo clippy -p move-core-sdk --no-default-features -- -D warnings
+cargo test -p move-core-sdk --all-features
+
+# move-rust-sdk
+cargo clippy -p move-rust-sdk --all-targets --all-features -- -D warnings
+cargo clippy -p move-rust-sdk --all-targets -- -D warnings           # default features
+cargo clippy -p move-rust-sdk --no-default-features -- -D warnings
+cargo test -p move-rust-sdk --all-features
+
 RUSTDOCFLAGS="--cfg docsrs -D warnings" cargo +nightly doc \
-    -p aptos-sdk --all-features --no-deps                            # docs.rs parity
+    -p move-core-sdk --all-features --no-deps                            # docs.rs parity
+RUSTDOCFLAGS="--cfg docsrs -D warnings" cargo +nightly doc \
+    -p move-rust-sdk --all-features --no-deps                        # docs.rs parity
 ```
 
 The lint job in CI runs the three clippy variants above, not just
@@ -53,8 +66,9 @@ removal, behaviour change, security fix, bug fix that affects callers,
 new feature) **MUST** add an entry to the relevant CHANGELOG before the
 PR is opened. The repo has two changelogs:
 
-- `crates/aptos-sdk/CHANGELOG.md` -- the main SDK crate.
-- `crates/aptos-sdk-macros/CHANGELOG.md` -- the proc-macros crate.
+- `crates/move-core-sdk/CHANGELOG.md` -- the core SDK crate.
+- `crates/move-core-sdk-macros/CHANGELOG.md` -- the proc-macros crate.
+- `crates/move-sdk/CHANGELOG.md` -- the chain-agnostic facade crate.
 
 Add entries under the `## [unreleased]` heading, grouped by
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) categories:
@@ -92,18 +106,18 @@ part of the change itself.
 
 ```bash
 cargo build                              # default features (ed25519 + secp256k1 + ...)
-cargo build -p aptos-sdk --all-features  # all features
+cargo build -p move-core-sdk --all-features  # all features
 cargo build --release                    # release build
 ```
 
 ### Testing
 
 ```bash
-cargo test -p aptos-sdk                                                   # unit tests
-cargo test -p aptos-sdk --all-features                                    # all features
+cargo test -p move-core-sdk                                                   # unit tests
+cargo test -p move-core-sdk --all-features                                    # all features
 APTOS_LOCAL_NODE_URL=https://fullnode.devnet.aptoslabs.com/v1 \
 APTOS_LOCAL_FAUCET_URL=https://faucet.devnet.aptoslabs.com         \
-    cargo test -p aptos-sdk --features "e2e,full" -- --ignored            # E2E on devnet
+    cargo test -p move-core-sdk --features "e2e,full" -- --ignored            # E2E on devnet
 ```
 
 The end-to-end tests in `tests/e2e/` are gated behind the `e2e` feature
@@ -123,7 +137,7 @@ localnet running on `127.0.0.1:8080` (the default in
 ```bash
 cargo fmt                                                  # format code
 cargo fmt -- --check                                       # check formatting
-cargo clippy -p aptos-sdk --all-features -- -D warnings    # strict linting (single variant)
+cargo clippy -p move-core-sdk --all-features -- -D warnings    # strict linting (single variant)
 ```
 
 But before pushing, run the three-variant clippy from the
@@ -135,12 +149,12 @@ All examples target devnet (the testnet faucet now requires a JWT API
 key and rejects unauthenticated requests):
 
 ```bash
-cargo run -p aptos-sdk --example transfer       --features "ed25519,faucet"
-cargo run -p aptos-sdk --example view_function  --features "ed25519"
+cargo run -p move-core-sdk --example transfer       --features "ed25519,faucet"
+cargo run -p move-core-sdk --example view_function  --features "ed25519"
 ```
 
-Examples are in `crates/aptos-sdk/examples/` and are individually feature-gated
-in `crates/aptos-sdk/Cargo.toml`.
+Examples are in `crates/move-core-sdk/examples/` and are individually feature-gated
+in `crates/move-core-sdk/Cargo.toml`.
 
 ## Code Architecture
 
@@ -149,9 +163,9 @@ in `crates/aptos-sdk/Cargo.toml`.
 The SDK follows a client-centric design with `Aptos` as the main entry
 point:
 
-- `Aptos` in `crates/aptos-sdk/src/aptos.rs` -- primary client combining
+- `Aptos` in `crates/move-core-sdk/src/aptos.rs` -- primary client combining
   all API capabilities.
-- `AptosConfig` in `crates/aptos-sdk/src/config.rs` -- network
+- `AptosConfig` in `crates/move-core-sdk/src/config.rs` -- network
   configuration (mainnet, testnet, devnet, localnet, custom).
 
 ### Module Structure
@@ -210,20 +224,20 @@ point:
 
 ### Important files to understand
 
-- `crates/aptos-sdk/src/aptos.rs` -- main SDK client combining all
+- `crates/move-core-sdk/src/aptos.rs` -- main SDK client combining all
   capabilities.
-- `crates/aptos-sdk/src/config.rs` -- network configuration. Note that
+- `crates/move-core-sdk/src/config.rs` -- network configuration. Note that
   `Network::Devnet.chain_id()` returns `0` so the live chain ID is
   resolved on first use; don't hardcode devnet IDs.
-- `crates/aptos-sdk/src/transaction/builder.rs` -- transaction builder.
-- `crates/aptos-sdk/src/transaction/authenticator.rs` -- authenticator
+- `crates/move-core-sdk/src/transaction/builder.rs` -- transaction builder.
+- `crates/move-core-sdk/src/transaction/authenticator.rs` -- authenticator
   types with the carefully hand-rolled `Serialize` impl.
-- `crates/aptos-sdk/src/account/mod.rs` -- `Account` trait and
+- `crates/move-core-sdk/src/account/mod.rs` -- `Account` trait and
   implementations.
-- `crates/aptos-sdk/src/account/webauthn.rs` -- WebAuthn / Passkey
+- `crates/move-core-sdk/src/account/webauthn.rs` -- WebAuthn / Passkey
   account (the supported path for on-chain `secp256r1` signing).
-- `crates/aptos-sdk/src/crypto/traits.rs` -- core cryptographic traits.
-- `crates/aptos-sdk/examples/transfer.rs` -- working example of a basic
+- `crates/move-core-sdk/src/crypto/traits.rs` -- core cryptographic traits.
+- `crates/move-core-sdk/examples/transfer.rs` -- working example of a basic
   transfer.
 
 ## Rust Toolchain
@@ -247,10 +261,10 @@ point:
 
 - **Unit tests** are co-located with source code (`#[cfg(test)] mod tests`)
   or in `src/tests/` directories.
-- **Behavioral tests** are in `crates/aptos-sdk/tests/behavioral/`; they
+- **Behavioral tests** are in `crates/move-core-sdk/tests/behavioral/`; they
   pin documented invariants (e.g. authentication-key derivation rules)
   without requiring a network.
-- **E2E tests** are in `crates/aptos-sdk/tests/e2e/`, gated behind the
+- **E2E tests** are in `crates/move-core-sdk/tests/e2e/`, gated behind the
   `e2e` feature flag and `#[ignore]`d so they only run when explicitly
   requested. They submit real transactions against a live Aptos network
   (devnet by default; localnet if `APTOS_LOCAL_NODE_URL` points to one).

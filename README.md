@@ -1,16 +1,15 @@
 # Move Rust SDK
 
-[![CI](https://github.com/aptos-labs/aptos-rust-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/aptos-labs/aptos-rust-sdk/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/aptos-labs/aptos-rust-sdk/graph/badge.svg)](https://codecov.io/gh/aptos-labs/aptos-rust-sdk)
+[![CI](https://github.com/Inferenco/move-rust-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/Inferenco/move-rust-sdk/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.95%2B-orange.svg)](rust-toolchain.toml)
-[![API Docs](https://img.shields.io/badge/docs-aptos--labs.github.io-blue)](https://aptos-labs.github.io/aptos-rust-sdk/aptos_sdk/index.html)
 
-A user-friendly, idiomatic Rust SDK for the [Aptos](https://aptos.dev) blockchain with feature parity to the [TypeScript SDK](https://github.com/aptos-labs/aptos-ts-sdk).
+A chain-agnostic Rust SDK for the [Move language](https://move-language.github.io/move/) ecosystem — works with [Movement](https://movementnetwork.xyz), [Aptos](https://aptos.dev), and any Move-based blockchain.
 
 ## Features
 
-- **Full Blockchain Interaction** &mdash; Connect, explore, and transact on the Aptos blockchain
+- **Chain-Agnostic Core** &mdash; [`move-rust-sdk`](crates/move-sdk/) provides a unified `MoveConfig` / `MoveClient` layer that works with any Move-based chain
+- **Shared Primitives** &mdash; [`move-core-sdk`](crates/move-core-sdk/) provides async clients, account management, transaction building, and crypto
 - **Multiple Signature Schemes** &mdash; Ed25519, Secp256k1, Secp256r1 (P-256), and BLS12-381
 - **Transaction Building** &mdash; Fluent builder pattern for entry functions, scripts, and multi-agent transactions
 - **Account Management** &mdash; Single-key, multi-key, multi-sig, and keyless (OIDC) accounts
@@ -22,8 +21,9 @@ A user-friendly, idiomatic Rust SDK for the [Aptos](https://aptos.dev) blockchai
 
 | Crate | Description |
 |---|---|
-| [`aptos-sdk`](crates/aptos-sdk/) | Main SDK &mdash; async clients, account management, transaction building, and crypto |
-| [`aptos-sdk-macros`](crates/aptos-sdk-macros/) | Procedural macros for type-safe contract bindings |
+| [`move-core-sdk`](crates/move-core-sdk/) | Core primitives &mdash; async clients, account management, transaction building, and crypto. Shared by all Move-based chains. |
+| [`move-core-sdk-macros`](crates/move-core-sdk-macros/) | Procedural macros for type-safe contract bindings from Move ABIs. |
+| [`move-rust-sdk`](crates/move-sdk/) | Chain-agnostic facade &mdash; unified `MoveConfig` / `MoveClient` layer with pre-built Aptos and Movement configurations. |
 
 ## Prerequisites
 
