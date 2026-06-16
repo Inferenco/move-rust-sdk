@@ -585,7 +585,7 @@ impl AptosConfig {
 /// Pre-built configurations for the Movement chain.
 ///
 /// Endpoints come from the official Movement documentation
-/// (https://docs.movementnetwork.xyz/devs/networkEndpoints).
+/// (<https://docs.movementnetwork.xyz/devs/networkEndpoints>).
 #[cfg(feature = "movement")]
 #[derive(Debug)]
 pub struct MovementConfig;
