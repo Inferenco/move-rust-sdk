@@ -9,10 +9,10 @@
 //!
 //! ```bash
 //! # Unit + behavioral tests (default)
-//! cargo test -p aptos-sdk --features "full"
+//! cargo test -p move-core-sdk --features "full"
 //!
 //! # Include E2E tests (requires localnet)
-//! cargo test -p aptos-sdk --features "full,e2e" -- --ignored
+//! cargo test -p move-core-sdk --features "full,e2e" -- --ignored
 //! ```
 
 mod behavioral;

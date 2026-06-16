@@ -14,8 +14,8 @@ on:
         required: true
         type: choice
         options:
-          - aptos-sdk
-          - aptos-sdk-macros
+          - move-core-sdk
+          - move-core-sdk-macros
           - both
       dry_run:
         description: 'Dry run (do not actually publish)'
@@ -42,11 +42,11 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             case "${{ inputs.crate }}" in
-              aptos-sdk-macros)
+              move-core-sdk-macros)
                 echo "publish_macros=true" >> "$GITHUB_OUTPUT"
                 echo "publish_sdk=false" >> "$GITHUB_OUTPUT"
                 ;;
-              aptos-sdk)
+              move-core-sdk)
                 echo "publish_macros=false" >> "$GITHUB_OUTPUT"
                 echo "publish_sdk=true" >> "$GITHUB_OUTPUT"
                 ;;
@@ -101,7 +101,7 @@ jobs:
         run: cargo +nightly doc --no-deps --all-features
 
   publish-macros:
-    name: Publish aptos-sdk-macros
+    name: Publish move-core-sdk-macros
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -116,22 +116,22 @@ jobs:
         with:
           toolchain: "1.95"
 
-      # --no-verify: The aptos-sdk dev-dependency is path-only (dropped from the
+      # --no-verify: The move-core-sdk dev-dependency is path-only (dropped from the
       # published crate to break the circular publish dependency), so the
       # verification build would fail. The verify job already runs full tests
       # with workspace path resolution.
-      - name: Publish aptos-sdk-macros (dry run)
+      - name: Publish move-core-sdk-macros (dry run)
         if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true
-        run: cargo publish -p aptos-sdk-macros --no-verify --dry-run
+        run: cargo publish -p move-core-sdk-macros --no-verify --dry-run
 
-      - name: Publish aptos-sdk-macros
+      - name: Publish move-core-sdk-macros
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run != true)
-        run: cargo publish -p aptos-sdk-macros --no-verify
+        run: cargo publish -p move-core-sdk-macros --no-verify
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   publish-sdk:
-    name: Publish aptos-sdk
+    name: Publish move-core-sdk
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -152,48 +152,48 @@ jobs:
           toolchain: "1.95"
 
       # If macros was just published, poll crates.io until it's indexed
-      - name: Wait for crates.io to index aptos-sdk-macros
+      - name: Wait for crates.io to index move-core-sdk-macros
         if: needs.publish-macros.result == 'success'
         run: |
-          MACROS_VERSION=$(grep '^version' crates/aptos-sdk-macros/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
-          echo "Waiting for aptos-sdk-macros ${MACROS_VERSION} to appear on crates.io..."
+          MACROS_VERSION=$(grep '^version' crates/move-core-sdk-macros/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+          echo "Waiting for move-core-sdk-macros ${MACROS_VERSION} to appear on crates.io..."
           for i in $(seq 1 30); do
             if curl -sf -H "User-Agent: aptos-rust-sdk-ci" \
-              "https://crates.io/api/v1/crates/aptos-sdk-macros/${MACROS_VERSION}" > /dev/null 2>&1; then
-              echo "aptos-sdk-macros ${MACROS_VERSION} is now available on crates.io"
+              "https://crates.io/api/v1/crates/move-core-sdk-macros/${MACROS_VERSION}" > /dev/null 2>&1; then
+              echo "move-core-sdk-macros ${MACROS_VERSION} is now available on crates.io"
               sleep 15  # extra buffer for sparse index propagation
               exit 0
             fi
             echo "Attempt ${i}/30: not yet indexed, waiting 10s..."
             sleep 10
           done
-          echo "ERROR: Timed out waiting for aptos-sdk-macros ${MACROS_VERSION}"
+          echo "ERROR: Timed out waiting for move-core-sdk-macros ${MACROS_VERSION}"
           exit 1
 
       # When publishing SDK alone, verify the macros dependency is already on crates.io
-      - name: Verify aptos-sdk-macros dependency is available
+      - name: Verify move-core-sdk-macros dependency is available
         if: needs.publish-macros.result == 'skipped'
         run: |
-          MACROS_VERSION=$(grep 'aptos-sdk-macros.*version' Cargo.toml | head -1 | sed 's/.*version = "\([^"]*\)".*/\1/')
-          echo "Checking that aptos-sdk-macros ${MACROS_VERSION} exists on crates.io..."
+          MACROS_VERSION=$(grep 'move-core-sdk-macros.*version' Cargo.toml | head -1 | sed 's/.*version = "\([^"]*\)".*/\1/')
+          echo "Checking that move-core-sdk-macros ${MACROS_VERSION} exists on crates.io..."
           if ! curl -sf -H "User-Agent: aptos-rust-sdk-ci" \
-            "https://crates.io/api/v1/crates/aptos-sdk-macros/${MACROS_VERSION}" > /dev/null 2>&1; then
-            echo "ERROR: aptos-sdk-macros ${MACROS_VERSION} is not on crates.io."
+            "https://crates.io/api/v1/crates/move-core-sdk-macros/${MACROS_VERSION}" > /dev/null 2>&1; then
+            echo "ERROR: move-core-sdk-macros ${MACROS_VERSION} is not on crates.io."
             echo "Publish the macros crate first (push macros-v${MACROS_VERSION} tag or use 'both')."
             exit 1
           fi
-          echo "aptos-sdk-macros ${MACROS_VERSION} is available."
+          echo "move-core-sdk-macros ${MACROS_VERSION} is available."
 
       - name: Verify crate can be packaged
-        run: cargo package -p aptos-sdk --locked
+        run: cargo package -p move-core-sdk --locked
 
-      - name: Publish aptos-sdk (dry run)
+      - name: Publish move-core-sdk (dry run)
         if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true
-        run: cargo publish -p aptos-sdk --locked --dry-run
+        run: cargo publish -p move-core-sdk --locked --dry-run
 
-      - name: Publish aptos-sdk
+      - name: Publish move-core-sdk
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run != true)
-        run: cargo publish -p aptos-sdk --locked
+        run: cargo publish -p move-core-sdk --locked
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 

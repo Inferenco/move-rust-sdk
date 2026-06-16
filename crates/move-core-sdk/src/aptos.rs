@@ -993,7 +993,7 @@ impl Aptos {
 
 // The simulation helpers below are only reachable from `Aptos::simulate`,
 // which is `#[cfg(feature = "ed25519")]`. Mirror that gate on the helpers so
-// `cargo clippy -p aptos-sdk --no-default-features` does not flag them as
+// `cargo clippy -p move-core-sdk --no-default-features` does not flag them as
 // dead code.
 
 // Backticks on every identifier in this module-internal doc comment keep

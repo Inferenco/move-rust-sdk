@@ -46,13 +46,25 @@ jobs:
           components: clippy
 
       - name: Run Clippy (default features)
-        run: cargo clippy -p aptos-sdk --all-targets -- -D warnings
+        run: cargo clippy -p move-core-sdk --all-targets -- -D warnings
 
       - name: Run Clippy (all features)
-        run: cargo clippy -p aptos-sdk --all-targets --all-features -- -D warnings
+        run: cargo clippy -p move-core-sdk --all-targets --all-features -- -D warnings
 
       - name: Run Clippy (no default features)
-        run: cargo clippy -p aptos-sdk --no-default-features -- -D warnings
+        run: cargo clippy -p move-core-sdk --no-default-features -- -D warnings
+
+      - name: Run Clippy on move-core-sdk-macros
+        run: cargo clippy -p move-core-sdk-macros --all-targets -- -D warnings
+
+      - name: Run Clippy on move-rust-sdk (default features)
+        run: cargo clippy -p move-rust-sdk --all-targets -- -D warnings
+
+      - name: Run Clippy on move-rust-sdk (all features)
+        run: cargo clippy -p move-rust-sdk --all-targets --all-features -- -D warnings
+
+      - name: Run Clippy on move-rust-sdk (no default features)
+        run: cargo clippy -p move-rust-sdk --no-default-features -- -D warnings
 
   test:
     name: Test
@@ -78,13 +90,22 @@ jobs:
           cache: ${{ matrix.os == 'macos-latest' && 'false' || 'true' }}
 
       - name: Build
-        run: cargo build -p aptos-sdk --all-targets
+        run: cargo build -p move-core-sdk --all-targets
+
+      - name: Build move-rust-sdk
+        run: cargo build -p move-rust-sdk --all-targets
 
       - name: Run tests
-        run: cargo test -p aptos-sdk --all-targets
+        run: cargo test -p move-core-sdk --all-targets
+
+      - name: Run move-rust-sdk tests
+        run: cargo test -p move-rust-sdk --all-targets
 
       - name: Run tests (all features)
-        run: cargo test -p aptos-sdk --all-targets --all-features
+        run: cargo test -p move-core-sdk --all-targets --all-features
+
+      - name: Run move-rust-sdk tests (all features)
+        run: cargo test -p move-rust-sdk --all-targets --all-features
 
   test-linux-arm:
     name: Test (Linux ARM64)
@@ -101,13 +122,22 @@ jobs:
           toolchain: stable
 
       - name: Build
-        run: cargo build -p aptos-sdk --all-targets
+        run: cargo build -p move-core-sdk --all-targets
+
+      - name: Build move-rust-sdk
+        run: cargo build -p move-rust-sdk --all-targets
 
       - name: Run tests
-        run: cargo test -p aptos-sdk --all-targets
+        run: cargo test -p move-core-sdk --all-targets
+
+      - name: Run move-rust-sdk tests
+        run: cargo test -p move-rust-sdk --all-targets
 
       - name: Run tests (all features)
-        run: cargo test -p aptos-sdk --all-targets --all-features
+        run: cargo test -p move-core-sdk --all-targets --all-features
+
+      - name: Run move-rust-sdk tests (all features)
+        run: cargo test -p move-rust-sdk --all-targets --all-features
 
   test-macos-intel:
     name: Test (macOS x86)
@@ -128,13 +158,22 @@ jobs:
           cache: "false"
 
       - name: Build
-        run: cargo build -p aptos-sdk --all-targets
+        run: cargo build -p move-core-sdk --all-targets
+
+      - name: Build move-rust-sdk
+        run: cargo build -p move-rust-sdk --all-targets
 
       - name: Run tests
-        run: cargo test -p aptos-sdk --all-targets
+        run: cargo test -p move-core-sdk --all-targets
+
+      - name: Run move-rust-sdk tests
+        run: cargo test -p move-rust-sdk --all-targets
 
       - name: Run tests (all features)
-        run: cargo test -p aptos-sdk --all-targets --all-features
+        run: cargo test -p move-core-sdk --all-targets --all-features
+
+      - name: Run move-rust-sdk tests (all features)
+        run: cargo test -p move-rust-sdk --all-targets --all-features
 
   test-no-simd:
     name: Test (Linux No SIMD - Docker Compatible)
@@ -158,16 +197,16 @@ jobs:
           toolchain: stable
 
       - name: Build (default features)
-        run: cargo build -p aptos-sdk --all-targets
+        run: cargo build -p move-core-sdk --all-targets
 
       - name: Run tests (default features)
-        run: cargo test -p aptos-sdk --all-targets
+        run: cargo test -p move-core-sdk --all-targets
 
       - name: Build (all features)
-        run: cargo build -p aptos-sdk --all-targets --all-features
+        run: cargo build -p move-core-sdk --all-targets --all-features
 
       - name: Run tests (all features)
-        run: cargo test -p aptos-sdk --all-targets --all-features
+        run: cargo test -p move-core-sdk --all-targets --all-features
 
   test-features:
     name: Test Feature Combinations
@@ -184,25 +223,25 @@ jobs:
           toolchain: "1.95"
 
       - name: Test with only ed25519
-        run: cargo test -p aptos-sdk --no-default-features --features ed25519
+        run: cargo test -p move-core-sdk --no-default-features --features ed25519
 
       - name: Test with only secp256k1
-        run: cargo test -p aptos-sdk --no-default-features --features secp256k1
+        run: cargo test -p move-core-sdk --no-default-features --features secp256k1
 
       - name: Test with secp256r1
-        run: cargo test -p aptos-sdk --features secp256r1
+        run: cargo test -p move-core-sdk --features secp256r1
 
       - name: Test with bls
-        run: cargo test -p aptos-sdk --features bls
+        run: cargo test -p move-core-sdk --features bls
 
       - name: Test with faucet
-        run: cargo test -p aptos-sdk --features faucet
+        run: cargo test -p move-core-sdk --features faucet
 
       - name: Test with indexer
-        run: cargo test -p aptos-sdk --features indexer
+        run: cargo test -p move-core-sdk --features indexer
 
       - name: Test with full features
-        run: cargo test -p aptos-sdk --features full
+        run: cargo test -p move-core-sdk --features full
 
   # Spec tests (behavioral tests from specifications)
   # TODO: Re-enable once specification tests are stabilized
@@ -239,12 +278,17 @@ jobs:
       - name: Check documentation (docs.rs parity)
         env:
           RUSTDOCFLAGS: --cfg docsrs -D warnings
-        run: cargo +nightly doc -p aptos-sdk --no-deps --all-features
+        run: cargo +nightly doc -p move-core-sdk --no-deps --all-features
 
       - name: Check macros documentation
         env:
           RUSTDOCFLAGS: --cfg docsrs -D warnings
-        run: cargo +nightly doc -p aptos-sdk-macros --no-deps --all-features
+        run: cargo +nightly doc -p move-core-sdk-macros --no-deps --all-features
+
+      - name: Check move-rust-sdk documentation (docs.rs parity)
+        env:
+          RUSTDOCFLAGS: --cfg docsrs -D warnings
+        run: cargo +nightly doc -p move-rust-sdk --no-deps --all-features
 
   # Deploy docs to GitHub Pages on main branch
   deploy-docs:
@@ -271,11 +315,16 @@ jobs:
       - name: Build documentation
         env:
           RUSTDOCFLAGS: --cfg docsrs
-        run: cargo +nightly doc -p aptos-sdk --no-deps --all-features
+        run: cargo +nightly doc -p move-core-sdk --no-deps --all-features
+
+      - name: Build move-rust-sdk documentation
+        env:
+          RUSTDOCFLAGS: --cfg docsrs
+        run: cargo +nightly doc -p move-rust-sdk --no-deps --all-features
 
       - name: Add redirect to main crate
         run: |
-          echo '<meta http-equiv="refresh" content="0; url=aptos_sdk/index.html">' > target/doc/index.html
+          echo '<meta http-equiv="refresh" content="0; url=move_rust_sdk/index.html">' > target/doc/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
@@ -303,8 +352,11 @@ jobs:
         with:
           toolchain: "1.95"
           
-      - name: Check MSRV
-        run: cargo check -p aptos-sdk --all-features
+      - name: Check MSRV (move-core-sdk)
+        run: cargo check -p move-core-sdk --all-features
+
+      - name: Check MSRV (move-rust-sdk)
+        run: cargo check -p move-rust-sdk --all-features
 
   coverage:
     name: Code Coverage
@@ -325,16 +377,16 @@ jobs:
 
       - name: Run coverage
         run: |
-          cargo tarpaulin -p aptos-sdk --features "full" --skip-clean --out Xml --out Html --output-dir target/coverage
-        working-directory: crates/aptos-sdk
+          cargo tarpaulin -p move-core-sdk --features "full" --skip-clean --out Xml --out Html --output-dir target/coverage
+        working-directory: crates/move-core-sdk
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: crates/aptos-sdk/target/coverage/cobertura.xml
+          files: crates/move-core-sdk/target/coverage/cobertura.xml
           flags: unittests
-          name: aptos-sdk-coverage
+          name: move-core-sdk-coverage
           fail_ci_if_error: false
           verbose: true
 
